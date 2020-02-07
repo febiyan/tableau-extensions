@@ -8,8 +8,7 @@ Like other frameworks, Vue supports routing, so we can host different custom vis
 
 Vuetify is optional here. I am using it for layout purposes and the extra component it gives. I really like the Material Design components that it provides.
 
-
-Why 
+How?
 
 * Change color theme: `src/plugins/vuetify.js`
 

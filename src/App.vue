@@ -1,197 +1,132 @@
 <template>
   <v-app>
     <v-content>
-      <v-container fluid="">
-        <v-row v-if="error">
-          <v-col cols="12">
-            <v-alert type="error" outlined>
-              {{ error }}
-            </v-alert>
+      <v-container
+        pa-0
+        fluid
+        class="d-flex flex-column align-stretch"
+        style="height: 100%;"
+      >
+        <v-row class="flex-grow-1 flex-shrink-0" dense>
+          <v-col>
+            <router-view :worksheetData="worksheetData"></router-view>
           </v-col>
         </v-row>
-        <v-row v-else>
-          <v-col cols="12">
-            {{ dashboard }} - {{ selectedWorksheet.name }}</v-col
-          >
-          <v-col cols="12">
-            {{ selectedWorksheet.data.length }} Records of:
-            {{ selectedWorksheet.fields }}
-          </v-col>
-          <v-col cols="12">
-            Sample Data: {{ selectedWorksheet.data[0] }}
-          </v-col>
-          <v-col cols="12">
-            <v-chart autoResize :options="vizOption"> </v-chart>
+        <v-row
+          v-if="status === 'ERROR'"
+          dense
+          class="flex-grow-0 flex-shrink-1"
+        >
+          <v-col>
+            {{ statusMessage }}
           </v-col>
         </v-row>
       </v-container>
     </v-content>
-    <!-- <v-content>
-      <Sunburst />
-    </v-content> -->
   </v-app>
 </template>
 
 <script>
-// import Sunburst from "./modules/sunburst/path";
 import "./utils/tableau.ext.js";
-import ECharts from "vue-echarts"; // refers to components/ECharts.vue in webpack
-// import ECharts modules manually to reduce bundle size
-import "echarts/lib/chart/sunburst";
-
 let tableau = window.tableau;
+
 export default {
   name: "App",
-
-  components: {
-    //    Sunburst
-    "v-chart": ECharts
-  },
-
   data: () => ({
-    error: null,
-    dashboard: "",
-    worksheets: [],
-    selectedWorksheet: {
-      name: "",
-      dashboard: "",
-      data: [],
-      fields: {}
-    },
-    vizOption: {
-      series: {
-        radius: ["15%", "80%"],
-        type: "sunburst",
-        sort: null,
-        highlightPolicy: "ancestor",
-        data: [],
-        label: {
-          rotate: "radial"
-        },
-        levels: []
-      }
-    }
+    logMessages: [],
+    // "", "LOADING", "ERROR", "COMPLETED"
+    status: "",
+    statusMessage: "",
+    worksheetNames: [],
+    worksheetData: []
     // expectedColumns: {}
   }),
   methods: {
-    findOrCreate: function(object, key) {
-      if (!(key in object)) {
-        object[key] = {
-          name: key,
-          value: 0,
-          children: {}
-        };
+    async loadWorksheetData(name) {
+      try {
+        // Get the underlying data from the worksheet
+        this.worksheetData = await this.getWorksheetData(name);
+        this.status = "COMPLETED";
+        this.statusMessage = "Loaded data from Tableau";
+      } catch (error) {
+        // Error while loading data
+        this.status = "ERROR";
+        this.statusMessage =
+          "Error while trying to load data from Tableau. (" + error + ")";
       }
-      return object;
     },
-    parse: function() {
-      // This function assumes that the fields have been mapped.
-      // Here we parse the data so that it conforms the visualisation data structure.
-      // This function should be an asynchronous function / promise so that it does not block UI.
-
-      // Get indices of the columns
-      const stateIndex = this.selectedWorksheet.fields.findIndex(
-        record => record.fieldName === "State"
+    /**
+     * A simple wrapper to Tableau's initializeAsync function
+     */
+    async initialize() {
+      return tableau.extensions.initializeAsync();
+    },
+    /**
+     * A simple wrapper/helper function to find worksheet
+     */
+    findWorksheet(worksheetName) {
+      const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
+        worksheet => worksheet.name === worksheetName
       );
-      const cityIndex = this.selectedWorksheet.fields.findIndex(
-        record => record.fieldName === "City"
+      if (!worksheet)
+        throw Error("Could not find worksheet with the given name.");
+      return worksheet;
+    },
+    /**
+     * A simple wrapper/helper function to load worksheet summary data
+     */
+    async getWorksheetSummaryData(worksheetName) {
+      return this.findWorksheet(worksheetName).getSummaryDataAsync();
+    },
+    /**
+     * A simple wrapper/helper function to load worksheet data
+     */
+    async getWorksheetData(worksheetName) {
+      return this.findWorksheet(worksheetName).getSummaryDataAsync();
+    },
+    /**
+     * Get a list of worksheet names
+     */
+    getWorksheetNames() {
+      return tableau.extensions.dashboardContent.dashboard.worksheets.map(
+        worksheet => worksheet.name
       );
-      const postalCodeIndex = this.selectedWorksheet.fields.findIndex(
-        record => record.fieldName === "Postal Code"
-      );
-      const salesIndex = this.selectedWorksheet.fields.findIndex(
-        record => record.fieldName === "Sales"
-      );
-
-      // ---------- LINES BELOW ARE SUNBURST SPECIFIC ----------
-      // Single pass through the data set
-      let stateCount = this.selectedWorksheet.data.reduce(
-        (tally, currentRecord) => {
-          tally = this.findOrCreate(tally, currentRecord[stateIndex].value);
-          // Reference to the current state tally
-          let stateTally = tally[currentRecord[stateIndex].value];
-          stateTally.value = stateTally.value + currentRecord[salesIndex].value;
-
-          // Create the city tally
-          stateTally.children = this.findOrCreate(
-            stateTally.children,
-            currentRecord[cityIndex].value
-          );
-          // Reference to the current city tally
-          let cityTally = stateTally.children[currentRecord[cityIndex].value];
-          cityTally.value = cityTally.value + currentRecord[salesIndex].value;
-
-          // Create the postcode tally
-          cityTally.children = this.findOrCreate(
-            cityTally.children,
-            currentRecord[postalCodeIndex].value
-          );
-          // Reference to the postcode tally
-          let postalCodeTally =
-            cityTally.children[currentRecord[postalCodeIndex].value];
-          postalCodeTally.value =
-            postalCodeTally.value + currentRecord[salesIndex].value;
-          return tally;
-        },
-        {}
-      );
-
-      // Change into object
-      this.vizOption.series.data = Object.values(stateCount).map(stateTally => {
-        stateTally.children = Object.values(stateTally.children).map(
-          cityTally => {
-            cityTally.children = Object.values(cityTally.children);
-            return cityTally;
-          }
-        );
-        return stateTally;
-      });
     }
   },
+  /**
+   * This function will be called as soon as the whole app is mounted on the window
+   */
   mounted: function() {
-    tableau.extensions
-      .initializeAsync()
-      .then(async () => {
+    this.status = "LOADING";
+    // Connect to Tableau
+    this.initialize()
+      .then(() => {
         // Get the dashboard name and its list of worksheets
         // I can only copy the dashboard name for now, I cannot copy the whole dashboard object to Vue.
         // Why? Circular reference inside component data throws an error in Vue.
-        this.dashboard = tableau.extensions.dashboardContent.dashboard.name;
-        tableau.extensions.dashboardContent.dashboard.worksheets.forEach(
-          worksheet => {
-            // Copy the worksheet data to be displayed
-            // I need to copy manually because it contains a circular reference.
-            this.worksheets.push({
-              name: worksheet.name,
-              dashboard: worksheet.parentDashboard.name,
-              data: [],
-              fields: []
-            });
-          }
-        );
+        this.worksheetNames = this.getWorksheetNames();
+        this.statusMessage = this.worksheetNames;
         // If >1 worksheets, show a list of selectable worksheets to the user
         // If 0 worksheets, show "Please add a worksheet to the dashboard."
         // If 1 worksheet, proceed to grab the underlying data immediately
-        if (this.worksheets.length != 1) {
-          this.error = "Please add a worksheet to the dashboard.";
+        if (this.worksheetNames.length == 0) {
+          this.status = "";
+          this.statusMessage = "Please add a worksheet to the dashboard.";
+          return;
+        } else if (this.worksheetNames.length > 1) {
+          this.status = "";
+          this.statusMessage = "Please choose a worksheet.";
           return;
         }
-        // Assign the one worksheet
-        this.selectedWorksheet = this.worksheets[0];
-
-        // Get the underlying data from the worksheet
-        // TODO: parse the data so that it works
-        let data = await tableau.extensions.dashboardContent.dashboard.worksheets[0].getUnderlyingDataAsync();
-        this.selectedWorksheet.fields = data.columns;
-        this.selectedWorksheet.data = data.data;
-
-        // Parse data
-        this.parse();
-        // FUTURE: First, check whether the expected field names are there
-        // If they are there, map the fields and parse the individual data
-        // If the expected field names are not there, then let the users map the field
+        // At this point, we're sure that there is only one worksheet.
+        // Load worksheet data. This will be then passed reactively as Props to the child component
+        this.loadWorksheetData(this.worksheetNames[0]);
       })
       .catch(error => {
-        this.error = error;
+        // Error while loading data
+        this.status = "ERROR";
+        this.statusMessage =
+          "Error while trying to connect to Tableau. (" + error + ")";
       });
   }
 };
