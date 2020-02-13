@@ -1,15 +1,21 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import Sunburst from "@/modules/sunburst";
+import Sunburst from "@/modules/sunburst/default";
+import SunburstPath from "@/modules/sunburst/path";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
+    path: "/sunburst",
     name: "sunburst",
     component: Sunburst
+  },
+  {
+    path: "/sunburst-path",
+    name: "sunburst-path",
+    component: SunburstPath
   }
 ];
 
