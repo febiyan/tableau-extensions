@@ -9,7 +9,7 @@
       <v-row v-if="status === 'COMPLETED'" class="flex-grow-1 flex-shrink-0">
         <v-col>
           <!-- https://github.com/David-Desmaisons/Vue.D3.sunburst -->
-          <sunburst :data="tree" >
+          <sunburst :data="tree">
             <!-- Add behaviors -->
             <template slot-scope="{ on, actions }">
               <highlightOnHover v-bind="{ on, actions }" />
@@ -18,7 +18,7 @@
 
             <!-- Add information to be displayed on top the graph -->
             <nodeInfoDisplayer
-            class="caption"
+              class="caption"
               slot="top"
               slot-scope="{ nodes }"
               :current="nodes.mouseOver"
@@ -28,7 +28,7 @@
 
             <!-- Add bottom legend -->
             <breadcrumbTrail
-            class="small-text"
+              class="small-text"
               slot="legend"
               slot-scope="{ nodes, colorGetter }"
               :current="nodes.mouseOver"
@@ -86,14 +86,15 @@
         </v-col>
       </v-row>
     </v-slide-x-transition>
+    
   </v-container>
 </template>
 
 <style>
-  /* Visualisation specific */
-  .small-text{
-    font-size: 6pt;
-  }
+/* Visualisation specific */
+.small-text {
+  font-size: 6pt;
+}
 </style>
 
 <script>

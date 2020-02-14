@@ -258,8 +258,7 @@ export default {
         // Set the data
         this.vizOptions.series.data = await Promise.all(promises);
       } catch (error) {
-        this.status = "ERROR";
-        this.statusMessage = "Error while parsing data. " + error;
+        throw new Error("Error while parsing data. " + error);
       }
     },
     /**
