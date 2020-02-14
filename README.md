@@ -1,42 +1,37 @@
-# Tableau Extensions
+# Tableau Extensions Server With Vue
 
-A custom tableau extension made using Vue, and Vuetify. This is designed for developers to easily add new visualisation templates using different libraries.
-With Vue and Vuetify, it will also be easy for them to create reactive visualisation with responsive or fluid layout.
+A custom Tableau Extensions API implementation with Vue, and Vuetify. This implementation is designed for developers to easily add new visualisation templates using different libraries. 
 
-Why Vue? Modern Javascript framework that eases development, testing, and deployment. Vue, to me, is the most natural way for developers who started from simple HTML/Javascript to a framework Javascript. The framework is relatively lightweight and blazing fast in reactivity. Like other frameworks, Vue supports routing, so we can host different custom visualisations in one application by routing the request to different URLs.
+With Vue, you'll get easy-to-code, blazing fast reactivity. Vue also supports routing, so we can host different custom visualisations in one web application/code base by routing the extension request to different URLs. With Vuetify, you'll find it easy to create reactive visualisation with responsive or fluid layout. Vuetify also comes with lots of prebuilt Material Design components and animations which I like.
 
-Why Vuetify? Well, Vuetify is optional here. I am using it for layout purposes and the extra component it gives. I really like the Material Design components that it provides.
+There is one visualisation library readily available in this repo, namely `echarts` (using `vue-echarts`). The library should provide diverse set of possible visualisations. However, should you want to add your own visualisation, you can do so by installing a new one. 
 
-There are a few visualisation libraries readily available in this repo, namely `echarts` (using `vue-echarts`). Those libraries should provide diverse set of possible visualisations. However, should you want to add your own visualisation, you can do so by installing a new one. 
-
+See [here](https://madewithvuejs.com/blog/top-vue-js-chart-components) to see popular Vue chart libraries.
 
 
 ## Overview
 
-Tableau Extensions provide a way to send data to an web page. The web page can run on a local server or on a remote web server. 
+Before continuing, if you don't know how Tableau Extensions API works, here is a picture that illustrates and overly-simplifies it:
 
-## Starting Up
+![alt text](docs/assets/Slide6.jpeg "Image")
 
+See more details on [Tableau Extensions API Github site](https://tableau.github.io/extensions-api/).
 
-How?
+Currently, there is 1 visualisation set up:
 
-First, 
+* Sunburst - Path: Accepts Path `[from, here, to there]` and the Count.
 
+## Adding New Visualisations
 
-* Change color theme: `src/plugins/vuetify.js`
+To add new visualisations, what you'll work on is the one on the Web Server side, and you'll also need to create a manifest file. Here is a picture of the tasks.
 
-* How to add a new visualisation:
+![](/docs/assets/Slide12.jpeg)
 
-* * Create a folder under `modules` with the following structure
+First, you will need to define your component manifest file. The file is stored under `/public/manifests`.
 
-viz-name/data-format like `sunburst/path`
+Then you'll need to configure a Vue route in `/src/router/index.js`.
 
-¬
-
-data transformation
-
-* * Create unit tests for (1) data transformation
-
+Next, create a Vue component to parse the data and display it in your selected visualisation library under `/src/modules`. The 
 
 ## Project setup
 ```
