@@ -1,6 +1,9 @@
 # Tableau Extensions Server With Vue
 
-A custom Tableau Extensions API implementation with Vue, and Vuetify. This implementation is designed for developers to easily add new visualisation templates using different libraries. 
+![preview gif](docs/assets/preview.gif "Preview")
+
+
+A custom Tableau Extensions API implementation with Vue, and Vuetify. This implementation is designed for developers to easily add new visualisation templates using different libraries. This is a small personal project during bench time in Teradata.
 
 With Vue, you'll get easy-to-code, blazing fast reactivity. Vue also supports routing, so we can host different custom visualisations in one web application/code base by routing the extension request to different URLs. With Vuetify, you'll find it easy to create reactive visualisation with responsive or fluid layout. Vuetify also comes with lots of prebuilt Material Design components and animations which I like.
 
