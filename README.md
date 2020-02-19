@@ -7,7 +7,7 @@ A custom Tableau Extensions API implementation with Vue, and Vuetify. This imple
 
 With Vue, you'll get easy-to-code, blazing fast reactivity. Vue also supports routing, so we can host different custom visualisations in one web application/code base by routing the extension request to different URLs. With Vuetify, you'll find it easy to create reactive visualisation with responsive or fluid layout. Vuetify also comes with lots of prebuilt Material Design components and animations which I like.
 
-There is one visualisation library readily available in this repo, namely `echarts` (using `vue-echarts`). The library should provide diverse set of possible visualisations. However, should you want to add your own visualisation, you can do so by installing a new one. 
+There are 3 visualisation libraries readily available in this repo, namely `echarts` (using `vue-echarts`), `google charts` and an open source sunburst charts. The libraries should provide diverse set of possible visualisations. However, should you want to add your own visualisation library, you can do so by installing a new one. 
 
 See [here](https://madewithvuejs.com/blog/top-vue-js-chart-components) to see popular Vue chart libraries.
 
