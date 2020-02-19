@@ -38,6 +38,18 @@
               :itemWidth="trailWidth"
             />
           </sunburst>
+          <v-btn
+            fixed
+            dark
+            bottom
+            primary
+            right
+            x-small
+            fab
+            @click="isDialogVisible = true"
+          >
+            <v-icon>mdi-cogs</v-icon>
+          </v-btn>
         </v-col>
       </v-row>
       <v-row
@@ -64,7 +76,7 @@
       </v-row>
       <!-- Error messages will go in the row below for developer debugging purposes -->
       <!-- To get your messages in the log, append logging messages to logMessages, like, 
-    `this.logMessages.push("This line")` or `this.logMessages.push(someVariable)` -->
+      `this.logMessages.push("This line")` or `this.logMessages.push(someVariable)` -->
       <v-row v-else-if="status === 'ERROR'">
         <v-col>
           <v-card></v-card>
@@ -86,7 +98,14 @@
         </v-col>
       </v-row>
     </v-slide-x-transition>
-    
+    <v-dialog
+      v-model="isDialogVisible"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <SettingsCard @settings-close="isDialogVisible = false" />
+    </v-dialog>
   </v-container>
 </template>
 
@@ -115,19 +134,24 @@ import {
 } from "vue-d3-sunburst";
 import "vue-d3-sunburst/dist/vue-d3-sunburst.css";
 
+// Dialog Box
+import SettingsCard from "./SettingsCard";
+
 export default {
   name: "SunburstPath",
-  mixins: [vizMixins], //
+  mixins: [vizMixins], // !Required!
   components: {
     FieldMappingCard,
     breadcrumbTrail, // D3 Vue Sunburst
     highlightOnHover,
     nodeInfoDisplayer,
     sunburst,
-    zoomOnClick
+    zoomOnClick,
+    SettingsCard
   },
   data: () => {
     return {
+      // Width of the trail
       trailWidth: 100,
       // The expectedFields is a variable that we will use in the dialog box where users
       // Can map the field they want. This way, they won't need to write their own UI.
@@ -148,14 +172,16 @@ export default {
       ],
       // The following is library-specific. You may want to change the structure
       // if you have different visualisation library
-      tree: null
+      tree: null,
+      // Dialog box
+      isDialogVisible: false
     };
   },
   methods: {
     /**
      * You should edit the content of function and make it suitable for your visualisation,
      * but don't change the name or contract.
-     * @params worksheetData : An array containing rows
+     * @params worksheetData : An array containing rows with Tableau's Data Set format
      */
     async parseWorksheetData(worksheetData) {
       try {

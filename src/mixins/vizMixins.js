@@ -8,7 +8,8 @@ export default {
       data: null,
       availableFields: null,
       mappedFields: null,
-      rowCount: null
+      rowCount: null,
+      delay: 500
     };
   },
   methods: {
@@ -22,7 +23,7 @@ export default {
         .then(() => {
           setTimeout(() => {
             this.status = "COMPLETED";
-          }, 500);
+          }, this.delay);
         })
         .catch(error => {
           this.status = "ERROR";
@@ -65,7 +66,6 @@ export default {
         this.rowCount = newWorksheetData.totalRowCount;
         this.tableauDataName = newWorksheetData.name;
         this.data = newWorksheetData.data;
-        console.log("what");
         if (this.mappedFields == null) {
           this.status = "USER_PENDING";
         } else {

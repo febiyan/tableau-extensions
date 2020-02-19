@@ -29,9 +29,9 @@ To add new visualisations, what you'll work on is the one on the Web Server side
 
 First, you will need to define your component manifest file. The file is stored under `/public/manifests`.
 
-Then you'll need to configure a Vue route in `/src/router/index.js`.
+Then you'll need to configure a Vue route in `/src/router/index.js`. See the source file and read [Vue's Router guide](https://router.vuejs.org/guide/#javascript) to learn how you can do that.
 
-Next, create a Vue component to parse the data and display it in your selected visualisation library under `/src/modules`. The 
+Next, create a Vue component to parse the data and display it in your selected visualisation library under `/src/modules`. There are some visualisations that you can use as examples.
 
 ## Project setup
 ```

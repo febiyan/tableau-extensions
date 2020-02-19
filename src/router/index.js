@@ -1,21 +1,27 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import Sunburst from "@/modules/sunburst/default";
 import SunburstPath from "@/modules/sunburst/path";
+import SankeyPath from "@/modules/sankey/path";
+import Graph from "@/modules/graph";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/sunburst",
-    name: "sunburst",
-    component: Sunburst
-  },
-  {
     path: "/sunburst-path",
     name: "sunburst-path",
     component: SunburstPath
+  },
+  {
+    path: "/sankey-path",
+    name: "sankey-path",
+    component: SankeyPath
+  },
+  {
+    path: "/graph",
+    name: "graph",
+    component: Graph
   }
 ];
 
