@@ -56,9 +56,10 @@ See the pre-made components for examples.
 
 ## Using The Visualisations
 
-1. Download the manifest `*.trex` file for the visualisation you need
-2. Create a dashboard and populate it with a worksheet
-3. Load the manifest file on the dashboard
+1. If you want to run locally, use `npm run serve`. If not, build the code with `npm run build` and serve it with any http server you want.
+2. Download the manifest `*.trex` file from the previously run server, for the visualisation you need.
+3. Create a dashboard and populate it with a worksheet.
+4. Load the manifest file on the dashboard.
 
 ## Improvements / Known Issues
 
