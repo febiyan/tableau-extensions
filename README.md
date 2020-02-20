@@ -20,9 +20,11 @@ Before continuing, if you don't know how Tableau Extensions API works, here is a
 
 See more details on [Tableau Extensions API Github site](https://tableau.github.io/extensions-api/).
 
-Currently, there is 1 visualisation set up:
+Currently, there are 3 visualisations set up:
 
-* Sunburst - Path: Accepts Path `[from, here, to there]` and the Count.
+* Sunburst - Path: Accepts `Path` string, e.g `[from, here, to, there]`, and the path `Count` field. The visualisation is served on the `http://<host>/sunburst-path` page, and the TREX file is available on `http://<host>/manifests/sunburst-path.trex`.
+* Sankey - Path: Accepts the same fields as Sunburst - Path. The visualisation is served on the `http://<host>/sankey-path` page, and the TREX file is available on `http://<host>/manifests/sankey-path.trex`.
+* Graph: Accepts `From` and `To` nodes, `Link Weight` and `Node Weight` fields. The visualisation is served on the `http://<host>/graph` page, and the TREX file is available on `http://<host>/manifests/graph.trex`.
 
 ## Adding New Visualisations
 
@@ -30,11 +32,39 @@ To add new visualisations, what you'll work on is the one on the Web Server side
 
 ![](/docs/assets/Slide12.jpeg)
 
-First, you will need to define your component manifest file. The file is stored under `/public/manifests`.
+
+You don't need to take care of the handshake activities between Tableau and the web app. It has been taken care of by `App.vue`. You'll only need to focus on the data and visualisation.
+
+To start, first, you will need to define your component manifest file. The file is stored under `/public/manifests`. There are other manifest files that you can copy and paste from.
 
 Then you'll need to configure a Vue route in `/src/router/index.js`. See the source file and read [Vue's Router guide](https://router.vuejs.org/guide/#javascript) to learn how you can do that.
 
-Next, create a Vue component to parse the data and display it in your selected visualisation library under `/src/modules`. There are some visualisations that you can use as examples.
+Next, create a Vue component to parse the data and display it in your selected visualisation library under `/src/modules`. This one requires coding. There are some visualisations that you can use as examples.
+
+
+### What You Need to Do in The Component
+
+
+
+* Implement the `async parseWorksheetData()` function in the component's `methods`
+* Define the `expectedFields` in the component's `data`
+* Import the visualisation library in the `<script></script>`
+* Implement the HTML 
+
+See the pre-made components for examples.
+
+
+## Using The Visualisations
+
+1. Download the manifest `*.trex` file for the visualisation you need
+2. Create a dashboard and populate it with a worksheet
+3. Load the manifest file on the dashboard
+
+## Improvements / Known Issues
+
+1. When parameters change, somehow the filtered data may not get reflected in the visualisation.
+2. [IMPROVEMENT] Use Vue Slots to simplify HTML layouting.
+3. [IMPROVEMENT] A way to configure the background color and the color scheme of the visualisations.
 
 ## Project setup
 ```
